@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-// ----- 주제: 배경의 색, 투명도 설정
+// ----- 주제: Light 조명
 
 export default function example() {
   // Renderer
@@ -10,17 +10,12 @@ export default function example() {
   const renderer = new THREE.WebGLRenderer({
     canvas,
     antialias: true,
-    alpha: true,
   });
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(window.devicePixelRatio > 1 ? 2 : 1);
-  // renderer.setClearAlpha(0.5);
-  renderer.setClearColor("#00ff00");
-  renderer.setClearAlpha(0.5);
 
   // Scene
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color("blue");
 
   // Camera
   // Perspective Camera(원근 카메라)
@@ -35,12 +30,15 @@ export default function example() {
   camera.position.z = 5;
   scene.add(camera);
 
+  const light = new THREE.DirectionalLight("#ffffff", 1.3);
+  light.position.x = 1;
+  light.position.z = 2;
+  scene.add(light);
+
   // Mesh
   const geometry = new THREE.BoxGeometry(1, 1, 1);
-  const material = new THREE.MeshBasicMaterial({
-    // color: 0xff0000
+  const material = new THREE.MeshStandardMaterial({
     color: "#ff0000",
-    // color: "red",
   });
   const mesh = new THREE.Mesh(geometry, material);
   scene.add(mesh);

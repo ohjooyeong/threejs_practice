@@ -1,6 +1,7 @@
 import * as THREE from "three";
+import gsap from "gsap";
 
-// ----- 주제: 배경의 색, 투명도 설정
+// ----- 주제: 라이브러리를 이용한 애니메이션
 
 export default function example() {
   // Renderer
@@ -10,17 +11,13 @@ export default function example() {
   const renderer = new THREE.WebGLRenderer({
     canvas,
     antialias: true,
-    alpha: true,
   });
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(window.devicePixelRatio > 1 ? 2 : 1);
-  // renderer.setClearAlpha(0.5);
-  renderer.setClearColor("#00ff00");
-  renderer.setClearAlpha(0.5);
 
   // Scene
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color("blue");
+  scene.fog = new THREE.Fog("black", 3, 7);
 
   // Camera
   // Perspective Camera(원근 카메라)
@@ -30,23 +27,45 @@ export default function example() {
     0.1, // near
     1000 // far
   );
-  camera.position.x = 1;
-  camera.position.y = 2;
+  camera.position.y = 1;
   camera.position.z = 5;
   scene.add(camera);
 
+  const light = new THREE.DirectionalLight("#ffffff", 1.3);
+  light.position.x = 1;
+  light.position.y = 5;
+  light.position.z = 10;
+  scene.add(light);
+
   // Mesh
   const geometry = new THREE.BoxGeometry(1, 1, 1);
-  const material = new THREE.MeshBasicMaterial({
-    // color: 0xff0000
+  const material = new THREE.MeshStandardMaterial({
     color: "#ff0000",
-    // color: "red",
   });
+
   const mesh = new THREE.Mesh(geometry, material);
   scene.add(mesh);
 
   // 그리기
-  renderer.render(scene, camera);
+  let oldTime = Date.now();
+
+  function draw() {
+    const newTime = Date.now();
+    const deltaTime = newTime - oldTime;
+    oldTime = newTime;
+
+    renderer.render(scene, camera);
+
+    // window.requestAnimationFrame(draw);
+    renderer.setAnimationLoop(draw);
+  }
+
+  // gsap
+  gsap.to(mesh.position, {
+    duration: 1,
+    y: 2,
+    z: 3,
+  });
 
   function setSize() {
     // 카메라
@@ -57,4 +76,6 @@ export default function example() {
   }
 
   window.addEventListener("resize", setSize);
+
+  draw();
 }
